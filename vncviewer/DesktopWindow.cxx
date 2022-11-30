@@ -847,9 +847,15 @@ int DesktopWindow::handle(int event)
     if (mouseGrabbed) {
       if ((Fl::event_x() < 0) || (Fl::event_x() >= w()) ||
           (Fl::event_y() < 0) || (Fl::event_y() >= h())) {
-        ungrabPointer();
+        if (keyboardGrabbed) {
+          // ungrabPointer() inside
+          ungrabKeyboard();
+        } else {
+          ungrabPointer();
+        }
       }
     }
+
     if (fullscreen_active()) {
       // calculate width of "edge" regions
       edge_scroll_size_x = viewport->w() / EDGE_SCROLL_SIZE;
@@ -1063,7 +1069,7 @@ bool DesktopWindow::hasFocus()
 
 void DesktopWindow::maybeGrabKeyboard()
 {
-  if (fullscreenSystemKeys && fullscreen_active() && hasFocus())
+  if (fullscreenSystemKeys /* && fullscreen_active()*/ && hasFocus())
     grabKeyboard();
 }
 
